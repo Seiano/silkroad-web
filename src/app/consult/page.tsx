@@ -50,13 +50,24 @@ export default function ConsultPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // In production, this would send to a backend API
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setIsSubmitting(false);
+    try {
+      const response = await fetch('/api/consult', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit');
+      }
+      
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Submit error:', error);
+      alert('提交失败，请稍后重试 / Submission failed, please try again later');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
